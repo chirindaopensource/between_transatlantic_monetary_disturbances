@@ -1,0 +1,112 @@
+﻿# =============================================================================
+# REQUIREMENTS.TXT
+# High-Resolution, Source-Dependent Macroeconomic Scenario Analysis and 
+# Forecasting System
+#
+# This requirements file specifies all dependencies for the production-grade
+# implementation of "In-between Transatlantic (Monetary) Disturbances"
+# analytical framework (Camara & Aublin, 2025).
+#
+# Installation: pip install -r requirements.txt
+# Python Version: >=3.8,<3.12
+# =============================================================================
+
+# =============================================================================
+# CORE NUMERICAL COMPUTING AND DATA MANIPULATION
+# =============================================================================
+
+# NumPy: Foundation for numerical computing, linear algebra operations
+# Required for: Matrix operations, rotational decomposition, MCMC sampling
+numpy>=1.21.0,<2.0.0
+
+# Pandas: Time series manipulation, data structures, and financial data handling
+# Required for: High-frequency data processing, time zone management, data cleaning
+pandas>=1.3.0,<3.0.0
+
+# SciPy: Scientific computing, statistical distributions, optimization
+# Required for: Multivariate normal distributions, statistical tests, linear algebra
+scipy>=1.7.0,<2.0.0
+
+# =============================================================================
+# ECONOMETRIC AND STATISTICAL MODELING
+# =============================================================================
+
+# Statsmodels: Econometric modeling, regression analysis, statistical tests
+# Required for: VAR/BVAR estimation, OLS regression, diagnostic tests, HAC covariance
+statsmodels>=0.12.0,<1.0.0
+
+# =============================================================================
+# FINANCIAL MARKET DATA INFRASTRUCTURE
+# =============================================================================
+
+# Pandas Market Calendars: Trading calendar management for financial time series
+# Required for: Market day identification, holiday handling, trading session alignment
+pandas-market-calendars>=2.0.0,<5.0.0
+
+# Pytz: Timezone handling and conversions
+# Required for: UTC/local time conversions, DST handling, multi-market synchronization
+pytz>=2021.1
+
+# =============================================================================
+# HIGH-PERFORMANCE COMPUTING AND PARALLELIZATION
+# =============================================================================
+
+# Joblib: Parallel processing and memory-efficient operations
+# Required for: Parallel MCMC chains, bootstrap procedures, cross-validation
+joblib>=1.0.0,<2.0.0
+
+# TQDM: Progress bars and monitoring for long-running computations
+# Required for: MCMC sampling progress, data processing monitoring, batch operations
+tqdm>=4.60.0,<5.0.0
+
+# =============================================================================
+# OPTIONAL PERFORMANCE ENHANCEMENTS
+# =============================================================================
+
+# Numba: Just-in-time compilation for numerical functions (optional but recommended)
+# Uncomment for significant performance improvements in Monte Carlo simulations
+# numba>=0.56.0,<1.0.0
+
+# Cython: C extensions for Python (optional, for custom optimized routines)
+# Uncomment if using custom Cython extensions for matrix operations
+# Cython>=0.29.0,<1.0.0
+
+# =============================================================================
+# DEVELOPMENT AND TESTING DEPENDENCIES (OPTIONAL)
+# =============================================================================
+
+# Uncomment the following section if setting up development environment:
+
+# pytest>=6.0.0,<8.0.0              # Unit testing framework
+# pytest-cov>=2.10.0,<5.0.0         # Coverage reporting
+# black>=21.0.0,<24.0.0              # Code formatting
+# flake8>=3.8.0,<7.0.0               # Linting
+# mypy>=0.812,<2.0.0                 # Type checking
+# jupyter>=1.0.0,<2.0.0              # Notebook environment
+# matplotlib>=3.3.0,<4.0.0           # Visualization (if needed for diagnostics)
+# seaborn>=0.11.0,<1.0.0             # Statistical visualization
+
+# =============================================================================
+# COMPATIBILITY NOTES
+# =============================================================================
+#
+# Python Version Compatibility:
+# - Minimum: Python 3.8 (f-strings, walrus operator, typing improvements)
+# - Maximum: Python 3.11 (tested compatibility)
+# - Python 3.12: May work but not extensively tested
+#
+# Operating System Compatibility:
+# - Linux: Fully supported and recommended for production
+# - macOS: Fully supported
+# - Windows: Supported with potential minor timezone handling differences
+#
+# Architecture Compatibility:
+# - x86_64: Fully optimized
+# - ARM64 (M1/M2 Macs): Supported via conda-forge or native wheels
+#
+# Memory Requirements:
+# - Minimum: 8GB RAM for basic operations
+# - Recommended: 16GB+ RAM for full-scale BVAR estimation
+# - High-frequency data processing: 32GB+ RAM recommended
+#
+# =============================================================================
