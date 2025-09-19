@@ -1,0 +1,86 @@
+﻿# ==============================================================================#
+#
+#  High-Fidelity Configuration File for Replicating
+#  "In-between Transatlantic (Monetary) Disturbances"
+#
+#  This file contains all necessary parameters to configure and run the
+#  end-to-end research pipeline.
+#
+# ==============================================================================#
+
+# --------------------------------------------------------------------------
+# PHASE I & II: IDENTIFICATION PARAMETERS
+# Source: Page 7, "Identification of monetary policy shocks"
+# --------------------------------------------------------------------------
+identification_params:
+  window_minutes_before: 10      # Standard practice, implied by high-frequency literature
+  window_minutes_after: 20       # Standard practice, implied by high-frequency literature
+  method: "rotational_angle_decomposition" # Explicitly stated on Page 7
+  benchmark_selection: "median_rotation"    # Explicitly stated on Page 7
+
+# --------------------------------------------------------------------------
+# PHASE III: BENCHMARK BVAR MODEL SPECIFICATION
+# Source: Page 6 ("Dataset"), Page 9 ("Bayesian VARs")
+# --------------------------------------------------------------------------
+bvar_specification:
+  endogenous_variables:
+    # The set of Canadian variables forming the core model.
+    # Source: Page 6, "The benchmark sample includes five Canadian variables..."
+    - "CAN_exchange_rate_log" # vs. USD for Fed shocks, vs. EUR for ECB shocks
+    - "CAN_policy_rate"
+    - "CAN_cpi_log"
+    - "CAN_equity_index_log"
+    - "CAN_gdp_log"
+  exogenous_variables:
+    # Shocks and deterministic components.
+    # Source: Page 9, "...include the identified ECB and Fed monetary policy shocks as exogenous regressors."
+    # Source: Page 9, "The specification also includes a linear time trend and a dummy for the COVID-19 period..."
+    - "shock_FED_MP" # Note: Suffix _MP added for clarity
+    - "shock_ECB_MP" # Note: Suffix _MP added for clarity
+    - "trend"
+    - "covid_dummy"
+  lags: 3 # Source: Page 9, "...with three lags of endogenous variables..."
+  covid_period:
+    # Source: Page 9, "...dummy for the COVID-19 period (March 2020-June 2021)..."
+    start_date: "2020-03-01"
+    end_date: "2021-06-01"
+
+# --------------------------------------------------------------------------
+# PHASE III: BAYESIAN PRIOR HYPERPARAMETERS
+# Source: Page 9, "Bayesian VARs"
+# --------------------------------------------------------------------------
+bvar_priors:
+  prior_family: "Normal-Wishart" # Source: Page 9, "We adopt a Normal-Wishart prior..."
+  hyperparameters:
+    # These are the specific values for the Minnesota-style elements of the prior.
+    ar_coeff_prior: 0.8                # Source: Page 9, "...prior mean for the first own lag set to 0.8..."
+    lambda_1_overall_tightness: 0.1    # Source: Page 9, "...overall tightness (λ1) set to 0.1..."
+    lambda_3_lag_decay: 1.0            # Source: Page 9, "...and lag decay (λ3) equal to 1."
+    exogenous_prior: "diffuse"         # Source: Page 9, "The exogenous monetary policy shocks are assigned diffuse priors."
+
+# --------------------------------------------------------------------------
+# PHASE IV: LOCAL PROJECTION SPECIFICATION
+# Source: Page 10, "Local projections" and Equation (1)
+# --------------------------------------------------------------------------
+local_projection_specification:
+  lags_dependent_variable: 3 # Source: Page 10, "We include three lags of the dependent variable..."
+  lags_controls: 3           # Source: Page 10, "...Canadian control variables x, foreign variables x*..." (lag count matches dependent var)
+  lags_shocks: 3             # Source: Page 10, "...and the shock series..."
+  include_trend: True        # Source: Page 10, "A linear time trend..."
+  include_covid_dummy: True   # Source: Page 10, "...and a COVID-19 dummy..."
+
+# --------------------------------------------------------------------------
+# COMPUTATIONAL & INFERENCE SETTINGS
+# These are standard practice values implied by the methodology.
+# --------------------------------------------------------------------------
+computation_settings:
+  mcmc_sampler:
+    total_draws: 20000     # A standard number for achieving stable posterior estimates.
+    burn_in_draws: 5000    # A standard burn-in period (e.g., 25% of total draws).
+    random_seed: 42        # Essential for exact numerical reproducibility.
+  impulse_response_functions:
+    horizon_months: 24     # Visual inspection of IRF plots in the paper shows horizons of at least 20 months. 24 is a safe standard.
+    credible_interval_level: 0.90 # Source: All figure notes, e.g., Page 12, "shaded areas represent 90% posterior credible intervals."
+  robustness_checks:
+    truncated_sample_end_date: "2020-02-29" # Source: Page 32, "...ends in February 2020, prior to the onset of lockdowns..."
+    identification_uncertainty_draws: 999 # Source: Page 34, Footnote 7, "...a fixed number of angles (999 in our case)..."
